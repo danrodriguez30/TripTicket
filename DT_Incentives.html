@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DT Incentives Payroll</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 13px;
+    }
+
+    body {
+      background-color: #f4f6f8;
+      color: #333;
+      padding: 15px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      background: #ffffff;
+      width: 100%;
+      max-width: 1000px;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+      font-size: 18px;
+      color: #1a252f;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    h3 {
+      font-size: 13px;
+      color: #2c3e50;
+      margin: 14px 0 6px 0;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #e0e0e0;
+      text-transform: uppercase;
+    }
+
+    .header-grid {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 12px;
+    }
+
+    .form-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      white-space: nowrap;
+      color: #555;
+    }
+
+    input[type="text"], input[type="number"], input[type="date"], select {
+      padding: 4px 8px;
+      height: 28px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      outline: none;
+      transition: border-color 0.2s;
+      background-color: #fff;
+    }
+
+    input:focus, select:focus {
+      border-color: #3182ce;
+      box-shadow: 0 0 0 1px #3182ce;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 8px;
+    }
+
+    th, td {
+      border: 1px solid #e2e8f0;
+      padding: 4px 8px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      background-color: #f7fafc;
+      font-weight: 600;
+      color: #4a5568;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    input.cell-input, select.cell-input {
+      width: 100%;
+      height: 26px;
+      padding: 2px 6px;
+    }
+
+    .summary-row {
+      font-weight: bold;
+      background-color: #f8fafc;
+    }
+
+    .total-display {
+      font-weight: 700;
+      font-size: 13px;
+      text-align: right;
+      color: #2d3748;
+      margin-bottom: 8px;
+    }
+
+    .net-pay-container {
+      display: flex;
+      justify-content: flex-end;
+      margin: 10px 0;
+    }
+
+    .net-pay-box {
+      background-color: #ebf8ff;
+      border: 1px solid #3182ce;
+      border-radius: 6px;
+      padding: 8px 16px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #2b6cb0;
+      display: inline-block;
+    }
+
+    .btn-container {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    button {
+      padding: 6px 14px;
+      height: 32px;
+      border: none;
+      border-radius: 4px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-clear {
+      background-color: #edf2f7;
+      color: #4a5568;
+    }
+
+    .btn-clear:hover {
+      background-color: #e2e8f0;
+    }
+
+    .btn-submit {
+      background-color: #2b6cb0;
+      color: white;
+    }
+
+    .btn-submit:hover {
+      background-color: #2c5282;
+    }
+
+    /* Summary Sections */
+    .summary-section {
+      margin-top: 25px;
+      padding-top: 15px;
+      border-top: 2px dashed #cbd5e0;
+      overflow-x: auto;
+    }
+
+    .summary-header-block {
+      background-color: #ebf8ff;
+      border: 1px solid #bee3f8;
+      padding: 12px 15px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+    }
+
+    .summary-header-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #2b6cb0;
+      text-align: center;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .summary-filter-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .summary-table th {
+      background-color: #2b6cb0;
+      color: white;
+      font-size: 10px;
+      text-align: center;
+    }
+
+    .project-table th {
+      background-color: #2c7a7b;
+      color: white;
+      font-size: 11px;
+    }
+
+    .summary-table td, .project-table td {
+      font-size: 11px;
+    }
+
+    .btn-print {
+      background-color: #38a169;
+      color: white;
+    }
+
+    .btn-print:hover {
+      background-color: #2f855a;
+    }
+
+    /* Action buttons in summary */
+    .btn-action-edit {
+      background-color: #d69e2e;
+      color: white;
+      padding: 2px 6px;
+      height: 22px;
+      font-size: 10px;
+      border-radius: 3px;
+    }
+
+    .btn-action-edit:hover {
+      background-color: #b7791f;
+    }
+
+    .btn-action-delete {
+      background-color: #e53e3e;
+      color: white;
+      padding: 2px 6px;
+      height: 22px;
+      font-size: 10px;
+      border-radius: 3px;
+    }
+
+    .btn-action-delete:hover {
+      background-color: #c53030;
+    }
+
+    /* Signatures Block */
+    .signature-container {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 35px;
+      padding: 0 20px;
+    }
+
+    .sig-box {
+      width: 220px;
+      text-align: center;
+    }
+
+    .sig-label {
+      font-weight: bold;
+      color: #4a5568;
+      font-size: 12px;
+      text-transform: uppercase;
+      margin-bottom: 40px;
+    }
+
+    .sig-line {
+      border-bottom: 1px solid #2d3748;
+      margin-bottom: 4px;
+    }
+
+    .sig-title {
+      font-size: 11px;
+      color: #718096;
+    }
+
+    @media print {
+      body { background-color: #fff; padding: 0; }
+      .container { box-shadow: none; max-width: 100%; padding: 0; }
+      .btn-container, .container > *:not(.summary-section) { display: none; }
+      .summary-section { border-top: none; margin-top: 0; padding-top: 0; }
+      .btn-print, .action-col { display: none !important; }
+      input[type="text"], input[type="date"] {
+        border: none;
+        border-bottom: 1px solid #aaa;
+        border-radius: 0;
+        background: transparent;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>DT INCENTIVES FORM</h2>
+
+  <!-- HEADER INFO -->
+  <div class="header-grid">
+    <div class="form-group">
+      <label for="fullname">FULLNAME:</label>
+      <input type="text" id="fullname" placeholder="Enter full name" style="width: 220px;">
+    </div>
+    <div class="form-group">
+      <label for="dtno">DT NO.:</label>
+      <input type="text" id="dtno" placeholder="Enter DT number" style="width: 140px;">
+    </div>
+  </div>
+
+  <!-- SECTION 1: BASIC PAY -->
+  <h3>1 BASIC PAY</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>DESCRIPTION</th>
+        <th style="width: 150px;">NO. OF DAYS / HOURS</th>
+        <th style="width: 180px;">RATE / BASIS</th>
+        <th style="width: 120px; text-align: right;">TOTAL AMOUNT</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>NO. OF DAYS OF DUTY</td>
+        <td><input type="number" id="dutyDays" class="cell-input" value="0" oninput="calculateAll()"></td>
+        <td><input type="number" id="dailyRate" class="cell-input" value="485" oninput="calculateAll()"></td>
+        <td id="dutyPay" style="text-align: right;">0.00</td>
+      </tr>
+      <tr>
+        <td>OVERTIME PAY</td>
+        <td><input type="number" id="otHours" class="cell-input" value="0" oninput="calculateAll()"></td>
+        <td style="color: #666; font-size: 11px;">(Rate / 8) * 1.25</td>
+        <td id="otPay" style="text-align: right;">0.00</td>
+      </tr>
+      <tr>
+        <td>SUNDAY PAY</td>
+        <td><input type="number" id="sundayDays" class="cell-input" value="0" oninput="calculateAll()"></td>
+        <td style="color: #666; font-size: 11px;">Rate * 30%</td>
+        <td id="sundayPay" style="text-align: right;">0.00</td>
+      </tr>
+      <tr>
+        <td>SHOPRATE</td>
+        <td><input type="number" id="shopDays" class="cell-input" value="0" oninput="calculateAll()"></td>
+        <td><input type="number" id="shopRate" class="cell-input" placeholder="Enter rate" value="0" oninput="calculateAll()"></td>
+        <td id="shopPay" style="text-align: right;">0.00</td>
+      </tr>
+      <tr>
+        <td>ADJUSTMENT</td>
+        <td colspan="2"><input type="number" id="adjAmount" class="cell-input" placeholder="Enter adjustment amount" value="0" oninput="calculateAll()"></td>
+        <td id="adjPay" style="text-align: right;">0.00</td>
+      </tr>
+      <tr>
+        <td>OTHERS</td>
+        <td colspan="2"><input type="number" id="otherAmount" class="cell-input" placeholder="Enter other amount" value="0" oninput="calculateAll()"></td>
+        <td id="otherPay" style="text-align: right;">0.00</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="total-display">TOTAL BASIC PAY: <span id="totalBasic">0.00</span></div>
+
+  <!-- SECTION 2: INCENTIVE PAYS -->
+  <h3>2 INCENTIVE PAYS</h3>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 30px;">#</th>
+        <th>PROJECT CODE</th>
+        <th style="width: 80px;">KM</th>
+        <th style="width: 70px;">RATE</th>
+        <th style="width: 90px; text-align: right;">INCENTIVES</th>
+        <th style="width: 90px; text-align: right;">CHARGING</th>
+        <th style="width: 100px; text-align: right;">TOTAL</th>
+      </tr>
+    </thead>
+    <tbody id="incentiveBody">
+      <!-- Dynamic rows -->
+    </tbody>
+    <tfoot>
+      <tr class="summary-row">
+        <td colspan="2" style="text-align: right;">TOTAL KM:</td>
+        <td id="totalKm">0.00</td>
+        <td colspan="4"></td>
+      </tr>
+    </tfoot>
+  </table>
+  <div class="total-display">GROSS AMOUNT: <span id="grossIncentives">0.00</span></div>
+
+  <!-- SECTION 3: DEDUCTIONS -->
+  <h3>3 DEDUCTIONS</h3>
+  <table style="max-width: 420px;">
+    <tbody>
+      <tr>
+        <td>SSS / PHIL-HEALTH / PAGIBIG</td>
+        <td style="width: 130px;"><input type="number" id="dedSss" class="cell-input" value="0.00" oninput="calculateAll()"></td>
+      </tr>
+      <tr>
+        <td>MUTUAL FUND</td>
+        <td><input type="number" id="dedMutual" class="cell-input" value="0.00" oninput="calculateAll()"></td>
+      </tr>
+      <tr>
+        <td>GROCERY</td>
+        <td><input type="number" id="dedGrocery" class="cell-input" value="0.00" oninput="calculateAll()"></td>
+      </tr>
+      <tr>
+        <td>CASH ADVANCE</td>
+        <td><input type="number" id="dedCa" class="cell-input" value="0.00" oninput="calculateAll()"></td>
+      </tr>
+      <tr>
+        <td>OTHERS</td>
+        <td><input type="number" id="dedOthers" class="cell-input" value="0.00" oninput="calculateAll()"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SECTION 4: NET PAY -->
+  <h3>4 NET PAY</h3>
+  <div class="net-pay-container">
+    <div class="net-pay-box">
+      NET PAY: ₱ <span id="netPay">0.00</span>
+    </div>
+  </div>
+
+  <div class="btn-container">
+    <button class="btn-clear" onclick="clearForm()">Clear Form</button>
+    <button class="btn-submit" id="saveBtn" onclick="saveRecord()">Save To Summary</button>
+  </div>
+
+  <!-- SUMMARY SECTION WRAPPER -->
+  <div class="summary-section">
+    
+    <!-- SUMMARY HEADER BLOCK -->
+    <div class="summary-header-block">
+      <div class="summary-header-title">DRIVERS INCENTIVES</div>
+      <div class="summary-filter-grid">
+        <div class="form-group">
+          <label>CUT-OFF PERIOD:</label>
+          <span style="font-weight: 600; color: #555;">From</span>
+          <input type="date" id="cutoffFrom">
+          <span style="font-weight: 600; color: #555;">To</span>
+          <input type="date" id="cutoffTo">
+        </div>
+        <div class="form-group">
+          <label for="summaryArea">AREA:</label>
+          <input type="text" id="summaryArea" placeholder="Enter Area / Station" style="width: 180px;">
+        </div>
+        <div>
+          <button class="btn-print" onclick="window.print()">Print / Export Summary</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1 PAYROLL SUMMARY TABLE -->
+    <div style="margin-bottom: 20px;">
+      <h3>1 PAYROLL SUMMARY (<span id="recordCount">0</span> Records Saved)</h3>
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th style="width: 25px;">#</th>
+            <th>NAME</th>
+            <th style="width: 50px;">DT NO.</th>
+            <th style="width: 80px;">GROSS AMOUNT</th>
+            <th style="width: 65px;">SSS/PHIL/PAGIBIG</th>
+            <th style="width: 60px;">MUTUAL FUND</th>
+            <th style="width: 60px;">GROCERY</th>
+            <th style="width: 60px;">CASH ADV.</th>
+            <th style="width: 55px;">OTHERS</th>
+            <th style="width: 75px;">TOTAL DED.</th>
+            <th style="width: 80px;">NET AMOUNT</th>
+            <th class="action-col" style="width: 90px;">ACTION</th>
+          </tr>
+        </thead>
+        <tbody id="summaryTableBody">
+          <tr>
+            <td colspan="12" style="text-align: center; color: #888;">Walay record pa nga na-save. Mag-add gamit ang form sa taas.</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr class="summary-row" style="background-color: #edf2f7; text-align: right;">
+            <td colspan="3" style="text-align: right;">GRAND TOTALS:</td>
+            <td id="grandGross">₱ 0.00</td>
+            <td id="grandSss">0.00</td>
+            <td id="grandMutual">0.00</td>
+            <td id="grandGrocery">0.00</td>
+            <td id="grandCa">0.00</td>
+            <td id="grandOthers">0.00</td>
+            <td id="grandDeduction" style="color: #c53030;">₱ 0.00</td>
+            <td id="grandNet" style="color: #2b6cb0;">₱ 0.00</td>
+            <td class="action-col"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- 2 CHARGE PER PROJECT SUMMARY -->
+    <div>
+      <h3>2 CHARGE PER PROJECT SUMMARY</h3>
+      <table class="project-table">
+        <thead>
+          <tr>
+            <th style="width: 30px;">#</th>
+            <th style="width: 180px;">PROJECT CODE</th>
+            <th>CONTRACT I.D</th>
+            <th style="width: 120px; text-align: right;">TOTAL KM</th>
+            <th style="width: 160px; text-align: right;">TOTAL CHARGE / COST</th>
+          </tr>
+        </thead>
+        <tbody id="projectSummaryBody">
+          <tr>
+            <td colspan="5" style="text-align: center; color: #888;">Walay Project Charge pa nga na-save.</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr class="summary-row" style="background-color: #e6fffa; text-align: right;">
+            <td colspan="3" style="text-align: right;">PROJECT GRAND TOTAL:</td>
+            <td id="projGrandKm">0.00</td>
+            <td id="projGrandCost" style="color: #2c7a7b;">₱ 0.00</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- SIGNATURE BLOCK -->
+    <div class="signature-container">
+      <div class="sig-box">
+        <div class="sig-label">Prepared By:</div>
+        <div class="sig-line"></div>
+        <div class="sig-title">Signature over Printed Name</div>
+      </div>
+      <div class="sig-box">
+        <div class="sig-label">Checked By:</div>
+        <div class="sig-line"></div>
+        <div class="sig-title">Signature over Printed Name</div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  // Dynamic Incentive Rows
+  const incentiveBody = document.getElementById('incentiveBody');
+  for (let i = 1; i <= 7; i++) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${i}</td>
+      <td><input type="text" class="cell-input inc-project" style="text-transform: uppercase;"></td>
+      <td><input type="number" class="cell-input inc-km" value="0" oninput="calculateAll()"></td>
+      <td>
+        <select class="cell-input inc-rate" onchange="calculateAll()">
+          <option value="0">0</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+        </select>
+      </td>
+      <td class="inc-val" style="text-align: right;">0.00</td>
+      <td class="inc-charging" style="text-align: right;">0.00</td>
+      <td class="inc-row-total" style="text-align: right;">0.00</td>
+    `;
+    incentiveBody.appendChild(tr);
+  }
+
+  // Record storage array & edit index
+  let payrollSummaryList = [];
+  let editingIndex = -1;
+
+  function calculateAll() {
+    // Basic Pay
+    const dutyDays = parseFloat(document.getElementById('dutyDays').value) || 0;
+    const dailyRate = parseFloat(document.getElementById('dailyRate').value) || 0;
+    const otHours = parseFloat(document.getElementById('otHours').value) || 0;
+    const sundayDays = parseFloat(document.getElementById('sundayDays').value) || 0;
+    const shopDays = parseFloat(document.getElementById('shopDays').value) || 0;
+    const shopRate = parseFloat(document.getElementById('shopRate').value) || 0;
+    const adjPay = parseFloat(document.getElementById('adjAmount').value) || 0;
+    const otherPay = parseFloat(document.getElementById('otherAmount').value) || 0;
+
+    const dutyPay = dutyDays * dailyRate;
+    document.getElementById('dutyPay').innerText = dutyPay.toFixed(2);
+
+    const hourlyRate = dailyRate / 8;
+    const otPay = hourlyRate * 1.25 * otHours;
+    document.getElementById('otPay').innerText = otPay.toFixed(2);
+
+    const sundayPay = dailyRate * 0.30 * sundayDays;
+    document.getElementById('sundayPay').innerText = sundayPay.toFixed(2);
+
+    const shopPay = shopDays * shopRate;
+    document.getElementById('shopPay').innerText = shopPay.toFixed(2);
+
+    document.getElementById('adjPay').innerText = adjPay.toFixed(2);
+    document.getElementById('otherPay').innerText = otherPay.toFixed(2);
+
+    const totalBasic = dutyPay + otPay + sundayPay + shopPay + adjPay + otherPay;
+    document.getElementById('totalBasic').innerText = totalBasic.toFixed(2);
+
+    // Incentive Calculation
+    const rows = incentiveBody.querySelectorAll('tr');
+
+    let totalKm = 0;
+    rows.forEach(row => {
+      const km = parseFloat(row.querySelector('.inc-km').value) || 0;
+      totalKm += km;
+    });
+    document.getElementById('totalKm').innerText = totalKm.toFixed(2);
+
+    let grossIncentives = 0;
+    let currentProjects = [];
+    let rawIncentivesData = [];
+
+    rows.forEach(row => {
+      const code = row.querySelector('.inc-project').value.trim().toUpperCase();
+      const km = parseFloat(row.querySelector('.inc-km').value) || 0;
+      const rate = parseFloat(row.querySelector('.inc-rate').value) || 0;
+
+      const incentivesVal = km * rate;
+      row.querySelector('.inc-val').innerText = incentivesVal.toFixed(2);
+
+      const chargingVal = totalKm > 0 ? (km / totalKm) * totalBasic : 0;
+      row.querySelector('.inc-charging').innerText = chargingVal.toFixed(2);
+
+      const rowTotal = incentivesVal + chargingVal;
+      row.querySelector('.inc-row-total').innerText = rowTotal.toFixed(2);
+
+      grossIncentives += rowTotal;
+
+      rawIncentivesData.push({ code, km, rate });
+
+      if (code !== '' && rowTotal > 0) {
+        currentProjects.push({
+          code: code,
+          km: km,
+          totalCost: rowTotal
+        });
+      }
+    });
+
+    document.getElementById('grossIncentives').innerText = grossIncentives.toFixed(2);
+
+    // Deductions
+    const sss = parseFloat(document.getElementById('dedSss').value) || 0;
+    const mutual = parseFloat(document.getElementById('dedMutual').value) || 0;
+    const grocery = parseFloat(document.getElementById('dedGrocery').value) || 0;
+    const ca = parseFloat(document.getElementById('dedCa').value) || 0;
+    const dedOthers = parseFloat(document.getElementById('dedOthers').value) || 0;
+
+    const totalDeductions = sss + mutual + grocery + ca + dedOthers;
+
+    // Net Pay Calculation
+    const netPay = grossIncentives - totalDeductions;
+    document.getElementById('netPay').innerText = netPay.toFixed(2);
+
+    return {
+      fullname: document.getElementById('fullname').value || 'N/A',
+      dtno: document.getElementById('dtno').value || 'N/A',
+      dutyDays, dailyRate, otHours, sundayDays, shopDays, shopRate, adjPay, otherPay,
+      rawIncentives: rawIncentivesData,
+      grossAmount: grossIncentives,
+      sss: sss,
+      mutual: mutual,
+      grocery: grocery,
+      ca: ca,
+      others: dedOthers,
+      totalDeduction: totalDeductions,
+      netAmount: netPay,
+      projects: currentProjects
+    };
+  }
+
+  function saveRecord() {
+    const name = document.getElementById('fullname').value.trim();
+    if (!name) {
+      alert("Palihug i-type ang FULLNAME sa dili pa mag-save.");
+      return;
+    }
+
+    const currentData = calculateAll();
+
+    if (editingIndex >= 0) {
+      // Update existing record
+      payrollSummaryList[editingIndex] = currentData;
+      alert(`Na-update na ang record ni ${currentData.fullname}!`);
+      editingIndex = -1;
+      document.getElementById('saveBtn').innerText = "Save To Summary";
+      document.getElementById('saveBtn').style.backgroundColor = "#2b6cb0";
+    } else {
+      // Save new record
+      payrollSummaryList.push(currentData);
+      alert(`Na-save na si ${currentData.fullname} sa Summary! (${payrollSummaryList.length} total records)`);
+    }
+
+    updateSummaryTable();
+    updateProjectSummary();
+    clearForm();
+  }
+
+  function editRecord(index) {
+    editingIndex = index;
+    const rec = payrollSummaryList[index];
+
+    document.getElementById('fullname').value = rec.fullname;
+    document.getElementById('dtno').value = rec.dtno;
+    document.getElementById('dutyDays').value = rec.dutyDays;
+    document.getElementById('dailyRate').value = rec.dailyRate;
+    document.getElementById('otHours').value = rec.otHours;
+    document.getElementById('sundayDays').value = rec.sundayDays;
+    document.getElementById('shopDays').value = rec.shopDays;
+    document.getElementById('shopRate').value = rec.shopRate;
+    document.getElementById('adjAmount').value = rec.adjPay;
+    document.getElementById('otherAmount').value = rec.otherPay;
+
+    // Fill incentive rows
+    const rows = incentiveBody.querySelectorAll('tr');
+    rec.rawIncentives.forEach((inc, i) => {
+      if (rows[i]) {
+        rows[i].querySelector('.inc-project').value = inc.code;
+        rows[i].querySelector('.inc-km').value = inc.km;
+        rows[i].querySelector('.inc-rate').value = inc.rate;
+      }
+    });
+
+    document.getElementById('dedSss').value = rec.sss;
+    document.getElementById('dedMutual').value = rec.mutual;
+    document.getElementById('dedGrocery').value = rec.grocery;
+    document.getElementById('dedCa').value = rec.ca;
+    document.getElementById('dedOthers').value = rec.others;
+
+    calculateAll();
+
+    document.getElementById('saveBtn').innerText = "Update Record";
+    document.getElementById('saveBtn').style.backgroundColor = "#d69e2e";
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function deleteRecord(index) {
+    if (confirm(`Sigurado ka nga gusto nimo i-delete ang record ni ${payrollSummaryList[index].fullname}?`)) {
+      payrollSummaryList.splice(index, 1);
+      updateSummaryTable();
+      updateProjectSummary();
+    }
+  }
+
+  function updateSummaryTable() {
+    const tbody = document.getElementById('summaryTableBody');
+    tbody.innerHTML = '';
+
+    if (payrollSummaryList.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="12" style="text-align: center; color: #888;">Walay record pa nga na-save. Mag-add gamit ang form sa taas.</td></tr>`;
+      return;
+    }
+
+    let grandGross = 0;
+    let grandSss = 0;
+    let grandMutual = 0;
+    let grandGrocery = 0;
+    let grandCa = 0;
+    let grandOthers = 0;
+    let grandDeduction = 0;
+    let grandNet = 0;
+
+    payrollSummaryList.forEach((rec, index) => {
+      grandGross += rec.grossAmount;
+      grandSss += rec.sss;
+      grandMutual += rec.mutual;
+      grandGrocery += rec.grocery;
+      grandCa += rec.ca;
+      grandOthers += rec.others;
+      grandDeduction += rec.totalDeduction;
+      grandNet += rec.netAmount;
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="text-align: center;">${index + 1}</td>
+        <td><strong>${rec.fullname}</strong></td>
+        <td>${rec.dtno}</td>
+        <td style="text-align: right;">₱ ${rec.grossAmount.toFixed(2)}</td>
+        <td style="text-align: right;">${rec.sss.toFixed(2)}</td>
+        <td style="text-align: right;">${rec.mutual.toFixed(2)}</td>
+        <td style="text-align: right;">${rec.grocery.toFixed(2)}</td>
+        <td style="text-align: right;">${rec.ca.toFixed(2)}</td>
+        <td style="text-align: right;">${rec.others.toFixed(2)}</td>
+        <td style="text-align: right; color: #c53030; font-weight: 600;">₱ ${rec.totalDeduction.toFixed(2)}</td>
+        <td style="text-align: right; font-weight: bold; color: #2b6cb0;">₱ ${rec.netAmount.toFixed(2)}</td>
+        <td class="action-col" style="text-align: center;">
+          <button class="btn-action-edit" onclick="editRecord(${index})">Edit</button>
+          <button class="btn-action-delete" onclick="deleteRecord(${index})">Del</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById('recordCount').innerText = payrollSummaryList.length;
+    document.getElementById('grandGross').innerText = `₱ ${grandGross.toFixed(2)}`;
+    document.getElementById('grandSss').innerText = grandSss.toFixed(2);
+    document.getElementById('grandMutual').innerText = grandMutual.toFixed(2);
+    document.getElementById('grandGrocery').innerText = grandGrocery.toFixed(2);
+    document.getElementById('grandCa').innerText = grandCa.toFixed(2);
+    document.getElementById('grandOthers').innerText = grandOthers.toFixed(2);
+    document.getElementById('grandDeduction').innerText = `₱ ${grandDeduction.toFixed(2)}`;
+    document.getElementById('grandNet').innerText = `₱ ${grandNet.toFixed(2)}`;
+  }
+
+  function updateProjectSummary() {
+    const tbody = document.getElementById('projectSummaryBody');
+    tbody.innerHTML = '';
+
+    let projectTotals = {};
+
+    payrollSummaryList.forEach(rec => {
+      rec.projects.forEach(p => {
+        if (!projectTotals[p.code]) {
+          projectTotals[p.code] = { km: 0, cost: 0 };
+        }
+        projectTotals[p.code].km += p.km;
+        projectTotals[p.code].cost += p.totalCost;
+      });
+    });
+
+    const projectCodes = Object.keys(projectTotals);
+
+    if (projectCodes.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #888;">Walay Project Charge pa nga na-save.</td></tr>`;
+      document.getElementById('projGrandKm').innerText = '0.00';
+      document.getElementById('projGrandCost').innerText = '₱ 0.00';
+      return;
+    }
+
+    let grandKm = 0;
+    let grandCost = 0;
+    let index = 1;
+
+    projectCodes.forEach(code => {
+      const data = projectTotals[code];
+      grandKm += data.km;
+      grandCost += data.cost;
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="text-align: center;">${index++}</td>
+        <td><strong>${code}</strong></td>
+        <td><input type="text" class="cell-input" placeholder="Enter Contract I.D" style="height: 24px;"></td>
+        <td style="text-align: right;">${data.km.toFixed(2)}</td>
+        <td style="text-align: right; font-weight: bold; color: #2c7a7b;">₱ ${data.cost.toFixed(2)}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById('projGrandKm').innerText = grandKm.toFixed(2);
+    document.getElementById('projGrandCost').innerText = `₱ ${grandCost.toFixed(2)}`;
+  }
+
+  function clearForm() {
+    editingIndex = -1;
+    document.getElementById('saveBtn').innerText = "Save To Summary";
+    document.getElementById('saveBtn').style.backgroundColor = "#2b6cb0";
+
+    document.getElementById('fullname').value = '';
+    document.getElementById('dtno').value = '';
+
+    document.querySelectorAll('input[type="number"]').forEach(input => {
+      if (input.id === 'dailyRate') {
+        input.value = 485;
+      } else {
+        input.value = 0;
+      }
+    });
+
+    document.querySelectorAll('.inc-project').forEach(input => input.value = '');
+    document.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
+
+    calculateAll();
+  }
+
+  calculateAll();
+</script>
+
+</body>
+</html>
